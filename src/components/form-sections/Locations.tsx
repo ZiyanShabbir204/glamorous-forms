@@ -161,7 +161,7 @@ const Locations = ({ form }: LocationsProps) => {
                       </FormControl>
                       <SelectContent className="bg-card border-border">
                         {premiumBasisOptions.map((option) => (
-                          <SelectItem key={option} value={option}>
+                          <SelectItem key={option}>
                             {option}
                           </SelectItem>
                         ))}
