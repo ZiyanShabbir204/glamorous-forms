@@ -1,4 +1,5 @@
 import { HTMLAttributes } from "react";
+import { Chip } from "@heroui/react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -23,7 +24,17 @@ const badgeVariants = cva(
 export interface BadgeProps extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, ...props }: BadgeProps) {
-  return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
+  const heroColor = variant === "destructive" ? "danger" : variant === "secondary" ? "secondary" : "primary";
+  const heroVariant = variant === "outline" ? "bordered" : "solid";
+  
+  return (
+    <Chip
+      variant={heroVariant}
+      color={heroColor}
+      className={cn(badgeVariants({ variant }), className)}
+      {...props}
+    />
+  );
 }
 
 export { Badge, badgeVariants };

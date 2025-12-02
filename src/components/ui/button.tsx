@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Button as HeroButton, ButtonProps as HeroButtonProps } from "@heroui/react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -31,15 +31,27 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends Omit<HeroButtonProps, "variant" | "size" | "color">,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
+    const heroVariant = variant === "outline" ? "bordered" : variant === "ghost" ? "light" : variant === "link" ? "light" : "solid";
+    const heroColor = variant === "destructive" ? "danger" : variant === "secondary" ? "secondary" : "primary";
+    const heroSize = size === "sm" ? "sm" : size === "lg" ? "lg" : "md";
+    
+    return (
+      <HeroButton
+        ref={ref}
+        variant={heroVariant}
+        color={heroColor}
+        size={heroSize}
+        className={cn(buttonVariants({ variant, size, className }))}
+        {...props}
+      />
+    );
   },
 );
 Button.displayName = "Button";

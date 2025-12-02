@@ -1,5 +1,5 @@
 import { forwardRef, ComponentPropsWithoutRef, ComponentProps } from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Breadcrumbs as HeroBreadcrumbs, BreadcrumbItem as HeroBreadcrumbItem } from "@heroui/react";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 
 import { cn } from "@/lib/utils";
