@@ -34,8 +34,23 @@ function Select({ children, className, placeholder, value, onValueChange, select
   );
 }
 
-// Re-export SelectItem from Hero UI
-const SelectItem = HeroSelectItem;
+// Custom SelectItem that accepts value prop for shadcn compatibility
+interface SelectItemProps {
+  children: ReactNode;
+  value?: string;
+  className?: string;
+  description?: string;
+  key?: string;
+}
+
+function SelectItem({ children, value, className, ...props }: SelectItemProps) {
+  // Hero UI uses key as the value identifier
+  return (
+    <HeroSelectItem key={value} className={cn(className)} {...props}>
+      {children}
+    </HeroSelectItem>
+  );
+}
 
 // Compatibility components for shadcn patterns
 function SelectGroup({ children }: { children: ReactNode }) {
