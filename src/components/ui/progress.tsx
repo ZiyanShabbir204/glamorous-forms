@@ -1,23 +1,23 @@
-import { forwardRef, ElementRef, ComponentPropsWithoutRef } from "react";
-import * as ProgressPrimitive from "@radix-ui/react-progress";
-
+import { Progress as HeroProgress, type ProgressProps as HeroProgressProps } from "@heroui/react";
 import { cn } from "@/lib/utils";
 
-const Progress = forwardRef<
-  ElementRef<typeof ProgressPrimitive.Root>,
-  ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
->(({ className, value, ...props }, ref) => (
-  <ProgressPrimitive.Root
-    ref={ref}
-    className={cn("relative h-4 w-full overflow-hidden rounded-full bg-secondary", className)}
-    {...props}
-  >
-    <ProgressPrimitive.Indicator
-      className="h-full w-full flex-1 bg-primary transition-all"
-      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
-    />
-  </ProgressPrimitive.Root>
-));
-Progress.displayName = ProgressPrimitive.Root.displayName;
+interface ProgressProps extends Omit<HeroProgressProps, "ref"> {
+  className?: string;
+  value?: number;
+}
 
-export { Progress };
+function Progress({ className, value = 0, ...props }: ProgressProps) {
+  return (
+    <HeroProgress
+      value={value}
+      classNames={{
+        base: cn("w-full", className),
+        track: "bg-secondary",
+        indicator: "bg-primary",
+      }}
+      {...props}
+    />
+  );
+}
+
+export { Progress, type ProgressProps };
