@@ -1,52 +1,48 @@
-import { forwardRef, ElementRef, ComponentPropsWithoutRef } from "react";
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ChevronDown } from "lucide-react";
-
+import { Accordion as HeroAccordion, AccordionItem as HeroAccordionItem } from "@heroui/react";
 import { cn } from "@/lib/utils";
+import { ReactNode } from "react";
 
-const Accordion = AccordionPrimitive.Root;
+interface AccordionItemData {
+  key: string;
+  title: ReactNode;
+  content: ReactNode;
+  subtitle?: ReactNode;
+}
 
-const AccordionItem = forwardRef<
-  ElementRef<typeof AccordionPrimitive.Item>,
-  ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
->(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item ref={ref} className={cn("border-b", className)} {...props} />
-));
-AccordionItem.displayName = "AccordionItem";
+interface AccordionProps {
+  items: AccordionItemData[];
+  variant?: "light" | "bordered" | "shadow" | "splitted";
+  selectionMode?: "none" | "single" | "multiple";
+  className?: string;
+  defaultExpandedKeys?: string[];
+}
 
-const AccordionTrigger = forwardRef<
-  ElementRef<typeof AccordionPrimitive.Trigger>,
-  ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Header className="flex">
-    <AccordionPrimitive.Trigger
-      ref={ref}
-      className={cn(
-        "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
-        className,
-      )}
-      {...props}
+function Accordion({ 
+  items, 
+  variant = "light", 
+  selectionMode = "single",
+  className,
+  defaultExpandedKeys 
+}: AccordionProps) {
+  return (
+    <HeroAccordion 
+      variant={variant} 
+      selectionMode={selectionMode}
+      className={cn(className)}
+      defaultExpandedKeys={defaultExpandedKeys}
     >
-      {children}
-      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-    </AccordionPrimitive.Trigger>
-  </AccordionPrimitive.Header>
-));
-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
+      {items.map((item) => (
+        <HeroAccordionItem
+          key={item.key}
+          aria-label={typeof item.title === "string" ? item.title : "Accordion item"}
+          title={item.title}
+          subtitle={item.subtitle}
+        >
+          {item.content}
+        </HeroAccordionItem>
+      ))}
+    </HeroAccordion>
+  );
+}
 
-const AccordionContent = forwardRef<
-  ElementRef<typeof AccordionPrimitive.Content>,
-  ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Content
-    ref={ref}
-    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
-    {...props}
-  >
-    <div className={cn("pb-4 pt-0", className)}>{children}</div>
-  </AccordionPrimitive.Content>
-));
-
-AccordionContent.displayName = AccordionPrimitive.Content.displayName;
-
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+export { Accordion, type AccordionProps, type AccordionItemData };
