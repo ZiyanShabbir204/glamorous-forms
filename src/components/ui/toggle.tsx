@@ -1,8 +1,7 @@
-import { forwardRef, ElementRef, ComponentPropsWithoutRef } from "react";
-import * as TogglePrimitive from "@radix-ui/react-toggle";
-import { cva, type VariantProps } from "class-variance-authority";
-
+import { Button } from "@heroui/react";
 import { cn } from "@/lib/utils";
+import { useState, ReactNode } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 
 const toggleVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground",
@@ -22,16 +21,51 @@ const toggleVariants = cva(
       variant: "default",
       size: "default",
     },
-  },
+  }
 );
 
-const Toggle = forwardRef<
-  ElementRef<typeof TogglePrimitive.Root>,
-  ComponentPropsWithoutRef<typeof TogglePrimitive.Root> & VariantProps<typeof toggleVariants>
->(({ className, variant, size, ...props }, ref) => (
-  <TogglePrimitive.Root ref={ref} className={cn(toggleVariants({ variant, size, className }))} {...props} />
-));
+interface ToggleProps extends VariantProps<typeof toggleVariants> {
+  pressed?: boolean;
+  defaultPressed?: boolean;
+  onPressedChange?: (pressed: boolean) => void;
+  className?: string;
+  children?: ReactNode;
+  disabled?: boolean;
+}
 
-Toggle.displayName = TogglePrimitive.Root.displayName;
+function Toggle({ 
+  pressed: controlledPressed, 
+  defaultPressed = false, 
+  onPressedChange,
+  variant,
+  size,
+  className, 
+  children,
+  disabled,
+  ...props 
+}: ToggleProps) {
+  const [internalPressed, setInternalPressed] = useState(defaultPressed);
+  const pressed = controlledPressed ?? internalPressed;
 
-export { Toggle, toggleVariants };
+  const handlePress = () => {
+    const newPressed = !pressed;
+    setInternalPressed(newPressed);
+    onPressedChange?.(newPressed);
+  };
+
+  return (
+    <Button
+      variant={pressed ? "solid" : variant === "outline" ? "bordered" : "light"}
+      color={pressed ? "primary" : "default"}
+      isDisabled={disabled}
+      className={cn(toggleVariants({ variant, size, className }))}
+      onPress={handlePress}
+      data-state={pressed ? "on" : "off"}
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+}
+
+export { Toggle, toggleVariants, type ToggleProps };
